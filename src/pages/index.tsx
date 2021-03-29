@@ -1,7 +1,5 @@
 import Head from 'next/head';
 
-import styles from '../styles/home.module.scss';
-
 export default function Home() {
   return (
     <>
@@ -10,9 +8,7 @@ export default function Home() {
 
         <meta name="description" content=""/>
       </Head>
-      <h1 className={styles.title}>
-        Hello <span>word</span>
-      </h1>
+      <h1>Hello word</h1>
     </>
   );
 }
