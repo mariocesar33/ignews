@@ -28,7 +28,7 @@ export default NextAuth({
             q.Collection('users'),
             { data: { email } }
           )
-        );
+        )
 
         return true;
       } catch {
