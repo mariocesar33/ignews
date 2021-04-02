@@ -13,7 +13,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const stripeCheckoutSession = await stripe.checkout.sessions.create({
       customer: stripeCustomer.id,// é o id do customer no stripe, e não no banco de dados no fauna
-
       payment_method_types: ['card'],
       billing_address_collection: 'required',
       line_items: [
@@ -25,9 +24,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       cancel_url: process.env.STRIPE_CANCEL_URL,
     });
 
-    return res.status(200).json({ session: stripeCheckoutSession.id })
+    return res.status(200).json({ sessionId: stripeCheckoutSession.id })
   } else {
-    res.setHeader('Allow', 'Post')
+    res.setHeader('Allow', 'POST')
     res.status(405).end('Method not allowed')
   }
 }
