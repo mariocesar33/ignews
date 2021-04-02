@@ -12,10 +12,9 @@ export function SubscribeButton({ priceId }: SubscribeButtonProps) {
     if(!session){
       signIn('github');
       return
-    } else {
-
     }
     // se está logado vou fazer a criação  da checkout session
+    
   }
   return (
     <button 
