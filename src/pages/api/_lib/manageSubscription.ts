@@ -4,7 +4,11 @@ import { fauna } from "../../../services/fauna";
 import { stripe } from '../../../services/stripe';
 
 // o que essa função vai fazer? é salvar as informações no banco de dados
-export async function saveSubscription(subscriptionId: string, customerId: string) {
+export async function saveSubscription(
+  subscriptionId: string, 
+  customerId: string,
+  createAction = false
+) {
   // vou buscar o ID do usuário no banco do FaunaDB com {customerId}
   const userRef = await fauna.query(
     q.Select(
@@ -16,7 +20,7 @@ export async function saveSubscription(subscriptionId: string, customerId: strin
         )
       )
     )
-  )
+  );
   
   //vou buscar todos os dados dá subscription
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
@@ -29,11 +33,30 @@ export async function saveSubscription(subscriptionId: string, customerId: strin
     price_id: subscription.items.data[0].price.id,
   }
 
-  // Salvar todos dados da subscription no FaunaDB
-  await fauna.query(
-    q.Create(
-      q.Collection('subscriptions'),
-      { data: subscriptionData }
+  if (createAction) {
+    // Salvar todos dados da subscription no FaunaDB
+    await fauna.query(
+      // se tivesse mais forma de assinar esse produto teria de fazer um "q.If()"
+      q.Create(
+        q.Collection('subscriptions'),
+        { data: subscriptionData }
+      )
     )
-  )
+  } else {
+    // atualizando um subscription fazendo Replace
+    await fauna.query(
+      q.Replace(
+        q.Select(
+          "ref",
+          q.Get(
+            q.Match(
+              q.Index('subscription_by_id'),
+              subscriptionId,
+            )
+          )
+        ),
+        { data: subscriptionData } // novo dados
+      )
+    )
+  }
 }
