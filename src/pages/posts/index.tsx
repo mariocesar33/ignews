@@ -54,13 +54,13 @@ export const getStaticProps: GetStaticProps = async () => {
   });
 
   // console.log(JSON.stringify(response, null, 2)); -> podemos ver os dados que vem do prismic 
+  
+  // formatação de dados
   const posts = response.results.map(post => {
     return {
       slug: post.uid,
       title: RichText.asText(post.data.title),
-      excerpt: post.data.content.find(
-        content => content.type === 'paragraph'
-      )?.text ?? '',
+      excerpt: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
       updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt', {
         day: '2-digit',
         month: 'long',
